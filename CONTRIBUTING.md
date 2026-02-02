@@ -69,6 +69,27 @@
 - 遵循 Vue 3 Composition API 的最佳实践。
 - 组件命名清晰，保持单一职责。
 
+## 🌟 上帝模式开发指南
+
+如果你想为上帝模式（God Mode）添加新功能，请遵循以下指南：
+
+### 后端开发
+- 在 `src/classes/god_mode.py` 中添加新的上帝能力方法
+- 在 `src/server/main.py` 中添加对应的API端点
+- 使用 `GodAbility` 枚举定义新的能力类型
+- 所有操作应调用 `record_action()` 记录历史
+
+### 前端开发
+- 在 `web/src/api/modules/god.ts` 中添加新的API调用
+- 在 `GodModePanel.vue` 中添加新的UI组件
+- 使用NaiveUI组件保持界面一致性
+- 提供清晰的用户反馈（成功/失败消息）
+
+### 文档更新
+- 在 `docs/god-mode-guide.md` 中记录新功能
+- 更新README中的功能列表
+- 如有必要，添加示例和使用技巧
+
 ## 🚀 提交 Pull Request (PR)
 
 1. **Fork** 本仓库到你的 GitHub 账户。

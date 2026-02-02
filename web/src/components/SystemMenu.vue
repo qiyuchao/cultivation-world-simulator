@@ -8,13 +8,14 @@ import CreateAvatarPanel from './game/panels/system/CreateAvatarPanel.vue'
 import DeleteAvatarPanel from './game/panels/system/DeleteAvatarPanel.vue'
 import LLMConfigPanel from './game/panels/system/LLMConfigPanel.vue'
 import GameStartPanel from './game/panels/system/GameStartPanel.vue'
+import GodModePanel from './game/panels/system/GodModePanel.vue'
 
 const { t } = useI18n()
 const settingStore = useSettingStore()
 
 const props = defineProps<{
   visible: boolean
-  defaultTab?: 'save' | 'load' | 'create' | 'delete' | 'llm' | 'start' | 'settings'
+  defaultTab?: 'save' | 'load' | 'create' | 'delete' | 'llm' | 'start' | 'settings' | 'god' | 'other'
   gameInitialized: boolean
   closable?: boolean
 }>()
@@ -26,7 +27,7 @@ const emit = defineEmits<{
   (e: 'exit-game'): void
 }>()
 
-const activeTab = ref<'save' | 'load' | 'create' | 'delete' | 'llm' | 'start' | 'settings' | 'other'>(props.defaultTab || 'load')
+const activeTab = ref<'save' | 'load' | 'create' | 'delete' | 'llm' | 'start' | 'settings' | 'god' | 'other'>(props.defaultTab || 'load')
 
 const languageOptions = [
   { label: '简体中文', value: 'zh-CN' },
@@ -97,6 +98,13 @@ watch(() => props.visible, (val) => {
           {{ t('ui.delete_character') }}
         </button>
         <button 
+          :class="{ active: activeTab === 'god' }"
+          @click="switchTab('god')"
+          :disabled="!gameInitialized"
+        >
+          🌟 上帝模式
+        </button>
+        <button 
           :class="{ active: activeTab === 'llm' }"
           @click="switchTab('llm')"
         >
@@ -134,6 +142,8 @@ watch(() => props.visible, (val) => {
         />
         
         <DeleteAvatarPanel v-else-if="activeTab === 'delete'" />
+        
+        <GodModePanel v-else-if="activeTab === 'god'" />
         
         <LLMConfigPanel 
           v-else-if="activeTab === 'llm'" 
