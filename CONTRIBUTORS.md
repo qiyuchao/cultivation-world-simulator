@@ -4,3 +4,4 @@
 * **[@xzhseh](https://github.com/xzhseh)** - 代码与repo维护
 * **[@teps3105](https://github.com/teps3105)** - 代码贡献
 * **[@MarkYangKp](https://github.com/MarkYangkp)** - 代码贡献
+* **GitHub Copilot Agent** - 上帝模式功能开发 (God Mode feature implementation)
