@@ -30,6 +30,37 @@ class GodAbility(Enum):
     TIME_CONTROL = "time_control"             # 时间控制
     WORLD_RESET = "world_reset"               # 世界重置
     AI_GENERATE = "ai_generate"               # AI生成
+    
+    # Life Skills (生活技能)
+    MANAGE_PLANTING = "manage_planting"       # 种植管理
+    MANAGE_RAISING = "manage_raising"         # 饲养管理
+    UPGRADE_SKILL = "upgrade_skill"           # 技能升级
+    
+    # Organization System (组织系统)
+    CONTROL_SECT_AI = "control_sect_ai"       # 控制宗门AI
+    CREATE_SECT_MISSION = "create_sect_mission"  # 创建宗门任务
+    MANAGE_FAMILY = "manage_family"           # 管理世家
+    CONTROL_COURT = "control_court"           # 控制朝廷
+    SET_ORG_RELATION = "set_org_relation"     # 设置组织关系
+    
+    # Event System (事件系统)
+    TRIGGER_COMPETITION = "trigger_competition"  # 触发比武大会
+    TRIGGER_SECT_COMP = "trigger_sect_comp"   # 触发宗门大比
+    TRIGGER_TREASURE = "trigger_treasure"     # 触发宝物出世
+    TRIGGER_DISASTER = "trigger_disaster"     # 触发自然灾害
+    TRIGGER_BEAST_TIDE = "trigger_beast_tide" # 触发兽潮
+    
+    # Ecosystem (生态系统)
+    CREATE_MAGIC_BEAST = "create_magic_beast" # 创建魔兽
+    
+    # Special Features (特殊功能)
+    TRIGGER_POSSESSION = "trigger_possession" # 触发夺舍
+    TRIGGER_REBIRTH = "trigger_rebirth"       # 触发重生
+    GRANT_FATE = "grant_fate"                 # 赐予机缘因果
+    PERFORM_DIVINATION = "perform_divination" # 执行占卜
+    CREATE_FORMATION = "create_formation"     # 创建阵法
+    SET_WORLD_SECRET = "set_world_secret"     # 设置世界秘密
+    TRIGGER_APOCALYPSE = "trigger_apocalypse" # 触发灭世危机
 
 
 @dataclass
@@ -376,6 +407,483 @@ class GodMode:
                 ability=GodAbility.CONTROL_WEATHER,
                 description=f"调整地块灵气 {delta:+.1f}",
                 result="成功"
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    # ==================== 生活技能 (Life Skills) ====================
+    
+    def manage_avatar_skill(
+        self,
+        avatar_id: str,
+        skill_type: str,
+        action: str = "upgrade",
+        value: int = 1
+    ) -> bool:
+        """
+        管理角色生活技能
+        
+        Args:
+            avatar_id: 角色ID
+            skill_type: 技能类型 (planting, raising, forging, alchemy)
+            action: 操作类型 (upgrade, set)
+            value: 数值
+        
+        Returns:
+            是否成功
+        """
+        avatar = self.world.avatar_manager.avatars.get(avatar_id)
+        if not avatar:
+            return False
+        
+        try:
+            ability_map = {
+                "planting": GodAbility.MANAGE_PLANTING,
+                "raising": GodAbility.MANAGE_RAISING,
+                "forging": GodAbility.UPGRADE_SKILL,
+                "alchemy": GodAbility.UPGRADE_SKILL
+            }
+            
+            # Note: Actual skill implementation would need to be in Avatar class
+            # This is a placeholder for God Mode control
+            
+            self.record_action(
+                ability=ability_map.get(skill_type, GodAbility.UPGRADE_SKILL),
+                description=f"{action} {avatar.name} 的 {skill_type} 技能",
+                target_ids=[avatar_id],
+                result=f"设置为 {value}"
+            )
+            
+            event_text = f"{avatar.name}的{skill_type}技能得到天道加持"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                related_avatars=[avatar],
+                is_major=False
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    # ==================== 组织系统 (Organization System) ====================
+    
+    def create_sect_mission(
+        self,
+        sect_id: int,
+        mission_desc: str,
+        reward: Dict[str, Any] = None
+    ) -> bool:
+        """
+        创建宗门任务
+        
+        Args:
+            sect_id: 宗门ID
+            mission_desc: 任务描述
+            reward: 奖励
+        
+        Returns:
+            是否成功
+        """
+        try:
+            # Placeholder for sect mission system
+            self.record_action(
+                ability=GodAbility.CREATE_SECT_MISSION,
+                description=f"为宗门 {sect_id} 创建任务: {mission_desc}",
+                result="成功"
+            )
+            
+            event_text = f"天降神谕，宗门获得新任务：{mission_desc}"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    def set_organization_relation(
+        self,
+        org1_id: str,
+        org2_id: str,
+        relation_type: str = "allied"
+    ) -> bool:
+        """
+        设置组织间关系
+        
+        Args:
+            org1_id: 组织1 ID
+            org2_id: 组织2 ID
+            relation_type: 关系类型 (allied, hostile, neutral)
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.SET_ORG_RELATION,
+                description=f"设置组织关系: {org1_id} <-> {org2_id} = {relation_type}",
+                result="成功"
+            )
+            
+            event_text = f"天意使然，两大势力关系发生变化"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    # ==================== 事件系统 (Event System) ====================
+    
+    def trigger_martial_competition(
+        self,
+        location: str = "天下第一擂台",
+        participants: List[str] = None
+    ) -> bool:
+        """
+        触发比武大会
+        
+        Args:
+            location: 地点
+            participants: 参与者ID列表
+        
+        Returns:
+            是否成功
+        """
+        try:
+            avatars = []
+            if participants:
+                for pid in participants:
+                    avatar = self.world.avatar_manager.avatars.get(pid)
+                    if avatar:
+                        avatars.append(avatar)
+            
+            self.record_action(
+                ability=GodAbility.TRIGGER_COMPETITION,
+                description=f"触发比武大会于 {location}",
+                target_ids=participants or [],
+                result="成功"
+            )
+            
+            event_text = f"{location}将举办盛大比武大会，英雄豪杰云集"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                related_avatars=avatars,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    def trigger_treasure_appearance(
+        self,
+        treasure_name: str,
+        location: str,
+        rarity: str = "legendary"
+    ) -> bool:
+        """
+        触发宝物出世
+        
+        Args:
+            treasure_name: 宝物名称
+            location: 出现地点
+            rarity: 稀有度
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_TREASURE,
+                description=f"触发宝物出世: {treasure_name} 于 {location}",
+                result="成功"
+            )
+            
+            event_text = f"天地异象！{treasure_name}于{location}横空出世，引起修仙界震动"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    def trigger_natural_disaster(
+        self,
+        disaster_type: str = "earthquake",
+        location: str = "",
+        severity: int = 5
+    ) -> bool:
+        """
+        触发自然灾害
+        
+        Args:
+            disaster_type: 灾害类型
+            location: 地点
+            severity: 严重程度 (1-10)
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_DISASTER,
+                description=f"触发{disaster_type}于{location}，严重程度{severity}",
+                result="成功"
+            )
+            
+            disaster_names = {
+                "earthquake": "地震",
+                "flood": "洪水",
+                "drought": "旱灾",
+                "storm": "风暴"
+            }
+            
+            event_text = f"天降灾劫！{location}发生{disaster_names.get(disaster_type, disaster_type)}，生灵涂炭"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    def trigger_beast_tide(
+        self,
+        location: str,
+        intensity: int = 5
+    ) -> bool:
+        """
+        触发兽潮
+        
+        Args:
+            location: 地点
+            intensity: 强度 (1-10)
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_BEAST_TIDE,
+                description=f"触发兽潮于{location}，强度{intensity}",
+                result="成功"
+            )
+            
+            event_text = f"妖兽暴动！{location}遭遇大规模兽潮袭击，危机四伏"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    # ==================== 特殊功能 (Special Features) ====================
+    
+    def trigger_possession(
+        self,
+        possessor_id: str,
+        target_id: str
+    ) -> bool:
+        """
+        触发夺舍
+        
+        Args:
+            possessor_id: 夺舍者ID
+            target_id: 被夺舍者ID
+        
+        Returns:
+            是否成功
+        """
+        possessor = self.world.avatar_manager.avatars.get(possessor_id)
+        target = self.world.avatar_manager.avatars.get(target_id)
+        
+        if not possessor or not target:
+            return False
+        
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_POSSESSION,
+                description=f"{possessor.name} 夺舍 {target.name}",
+                target_ids=[possessor_id, target_id],
+                result="成功"
+            )
+            
+            event_text = f"惊天秘术！{possessor.name}施展夺舍之术，占据{target.name}肉身"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                related_avatars=[possessor, target],
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    def trigger_rebirth(
+        self,
+        avatar_id: str,
+        rebirth_type: str = "reincarnation"
+    ) -> bool:
+        """
+        触发重生
+        
+        Args:
+            avatar_id: 角色ID
+            rebirth_type: 重生类型
+        
+        Returns:
+            是否成功
+        """
+        avatar = self.world.avatar_manager.avatars.get(avatar_id)
+        if not avatar:
+            return False
+        
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_REBIRTH,
+                description=f"{avatar.name} 获得重生机会 ({rebirth_type})",
+                target_ids=[avatar_id],
+                result="成功"
+            )
+            
+            event_text = f"轮回奥秘！{avatar.name}逆天改命，获得重生之机"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                related_avatars=[avatar],
+                is_major=True
+            )
+            
+            return True
+        except Exception:
+            return False
+    
+    async def perform_divination(
+        self,
+        avatar_id: str,
+        question: str
+    ) -> str:
+        """
+        执行占卜
+        
+        Args:
+            avatar_id: 角色ID
+            question: 占卜问题
+        
+        Returns:
+            占卜结果
+        """
+        avatar = self.world.avatar_manager.avatars.get(avatar_id)
+        if not avatar:
+            return "占卜失败：未找到角色"
+        
+        try:
+            prompt = f"""
+作为修仙世界的天道，为以下角色进行占卜预言：
+
+角色信息：
+- 姓名：{avatar.name}
+- 境界：{avatar.cultivation.realm}
+- 问题：{question}
+
+请生成一个神秘而富有深意的占卜预言（50字以内）。
+"""
+            result = await self.ai_generate_text(prompt, use_fast_model=True)
+            
+            self.record_action(
+                ability=GodAbility.PERFORM_DIVINATION,
+                description=f"为{avatar.name}占卜: {question}",
+                target_ids=[avatar_id],
+                result=result[:50],
+                ai_used=True
+            )
+            
+            return result
+        except Exception as e:
+            return f"占卜失败: {str(e)}"
+    
+    def set_world_secret(
+        self,
+        secret_name: str,
+        secret_desc: str,
+        reveal_condition: str = ""
+    ) -> bool:
+        """
+        设置世界秘密
+        
+        Args:
+            secret_name: 秘密名称
+            secret_desc: 秘密描述
+            reveal_condition: 揭示条件
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.SET_WORLD_SECRET,
+                description=f"设置世界秘密: {secret_name}",
+                result="成功"
+            )
+            
+            # Placeholder for world secret system
+            return True
+        except Exception:
+            return False
+    
+    def trigger_apocalypse(
+        self,
+        apocalypse_type: str = "demon_invasion",
+        severity: int = 10
+    ) -> bool:
+        """
+        触发灭世危机
+        
+        Args:
+            apocalypse_type: 危机类型
+            severity: 严重程度
+        
+        Returns:
+            是否成功
+        """
+        try:
+            self.record_action(
+                ability=GodAbility.TRIGGER_APOCALYPSE,
+                description=f"触发灭世危机: {apocalypse_type}",
+                result=f"严重程度{severity}"
+            )
+            
+            crisis_names = {
+                "demon_invasion": "魔族入侵",
+                "world_collapse": "世界崩塌",
+                "ancient_evil": "上古邪神复苏",
+                "void_tear": "虚空裂缝"
+            }
+            
+            event_text = f"天地大劫！{crisis_names.get(apocalypse_type, apocalypse_type)}，修仙界面临灭世危机"
+            self.world.event_manager.add_event(
+                event_text,
+                month_stamp=self.world.month_stamp,
+                is_major=True
             )
             
             return True

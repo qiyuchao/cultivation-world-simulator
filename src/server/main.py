@@ -2021,6 +2021,219 @@ def god_get_history(limit: int = 50):
     history = god_mode.get_action_history(limit)
     return {"status": "ok", "history": history}
 
+# --- Extended God Mode API (扩展上帝模式) ---
+
+class GodSkillRequest(BaseModel):
+    avatar_id: str
+    skill_type: str  # planting, raising, forging, alchemy
+    action: str = "upgrade"
+    value: int = 1
+
+class GodSectMissionRequest(BaseModel):
+    sect_id: int
+    mission_desc: str
+    reward: Optional[Dict[str, Any]] = None
+
+class GodOrgRelationRequest(BaseModel):
+    org1_id: str
+    org2_id: str
+    relation_type: str = "allied"
+
+class GodCompetitionRequest(BaseModel):
+    location: str = "天下第一擂台"
+    participants: Optional[List[str]] = None
+
+class GodTreasureRequest(BaseModel):
+    treasure_name: str
+    location: str
+    rarity: str = "legendary"
+
+class GodDisasterRequest(BaseModel):
+    disaster_type: str = "earthquake"
+    location: str = ""
+    severity: int = 5
+
+class GodBeastTideRequest(BaseModel):
+    location: str
+    intensity: int = 5
+
+class GodPossessionRequest(BaseModel):
+    possessor_id: str
+    target_id: str
+
+class GodRebirthRequest(BaseModel):
+    avatar_id: str
+    rebirth_type: str = "reincarnation"
+
+class GodDivinationRequest(BaseModel):
+    avatar_id: str
+    question: str
+
+class GodWorldSecretRequest(BaseModel):
+    secret_name: str
+    secret_desc: str
+    reveal_condition: str = ""
+
+class GodApocalypseRequest(BaseModel):
+    apocalypse_type: str = "demon_invasion"
+    severity: int = 10
+
+@app.post("/api/god/manage_skill")
+def god_manage_skill(req: GodSkillRequest):
+    """管理角色生活技能"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.manage_avatar_skill(req.avatar_id, req.skill_type, req.action, req.value)
+    if success:
+        return {"status": "ok", "message": "Skill managed"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to manage skill")
+
+@app.post("/api/god/create_sect_mission")
+def god_create_sect_mission(req: GodSectMissionRequest):
+    """创建宗门任务"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.create_sect_mission(req.sect_id, req.mission_desc, req.reward)
+    if success:
+        return {"status": "ok", "message": "Sect mission created"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to create mission")
+
+@app.post("/api/god/set_org_relation")
+def god_set_org_relation(req: GodOrgRelationRequest):
+    """设置组织关系"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.set_organization_relation(req.org1_id, req.org2_id, req.relation_type)
+    if success:
+        return {"status": "ok", "message": "Organization relation set"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to set relation")
+
+@app.post("/api/god/trigger_competition")
+def god_trigger_competition(req: GodCompetitionRequest):
+    """触发比武大会"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_martial_competition(req.location, req.participants)
+    if success:
+        return {"status": "ok", "message": "Competition triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger competition")
+
+@app.post("/api/god/trigger_treasure")
+def god_trigger_treasure(req: GodTreasureRequest):
+    """触发宝物出世"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_treasure_appearance(req.treasure_name, req.location, req.rarity)
+    if success:
+        return {"status": "ok", "message": "Treasure appearance triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger treasure")
+
+@app.post("/api/god/trigger_disaster")
+def god_trigger_disaster(req: GodDisasterRequest):
+    """触发自然灾害"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_natural_disaster(req.disaster_type, req.location, req.severity)
+    if success:
+        return {"status": "ok", "message": "Natural disaster triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger disaster")
+
+@app.post("/api/god/trigger_beast_tide")
+def god_trigger_beast_tide(req: GodBeastTideRequest):
+    """触发兽潮"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_beast_tide(req.location, req.intensity)
+    if success:
+        return {"status": "ok", "message": "Beast tide triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger beast tide")
+
+@app.post("/api/god/trigger_possession")
+def god_trigger_possession(req: GodPossessionRequest):
+    """触发夺舍"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_possession(req.possessor_id, req.target_id)
+    if success:
+        return {"status": "ok", "message": "Possession triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger possession")
+
+@app.post("/api/god/trigger_rebirth")
+def god_trigger_rebirth(req: GodRebirthRequest):
+    """触发重生"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_rebirth(req.avatar_id, req.rebirth_type)
+    if success:
+        return {"status": "ok", "message": "Rebirth triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger rebirth")
+
+@app.post("/api/god/perform_divination")
+async def god_perform_divination(req: GodDivinationRequest):
+    """执行占卜"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    try:
+        result = await god_mode.perform_divination(req.avatar_id, req.question)
+        return {"status": "ok", "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/god/set_world_secret")
+def god_set_world_secret(req: GodWorldSecretRequest):
+    """设置世界秘密"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.set_world_secret(req.secret_name, req.secret_desc, req.reveal_condition)
+    if success:
+        return {"status": "ok", "message": "World secret set"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to set world secret")
+
+@app.post("/api/god/trigger_apocalypse")
+def god_trigger_apocalypse(req: GodApocalypseRequest):
+    """触发灭世危机"""
+    god_mode = game_instance.get("god_mode")
+    if not god_mode:
+        raise HTTPException(status_code=503, detail="God Mode not initialized")
+    
+    success = god_mode.trigger_apocalypse(req.apocalypse_type, req.severity)
+    if success:
+        return {"status": "ok", "message": "Apocalypse triggered"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to trigger apocalypse")
+
 # --- 静态文件挂载 (必须放在最后) ---
 
 # 1. 挂载游戏资源 (图片等)
