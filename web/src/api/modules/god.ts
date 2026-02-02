@@ -116,5 +116,68 @@ export const godApi = {
     return httpClient.get<{ status: string; history: GodActionHistory[] }>(
       `/api/god/history${limit ? `?limit=${limit}` : ''}`
     );
+  },
+
+  /**
+   * 触发比武大会
+   */
+  triggerCompetition(params: { location: string; participants?: string[] }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_competition', params);
+  },
+
+  /**
+   * 触发宝物出世
+   */
+  triggerTreasure(params: { treasure_name: string; location: string; rarity?: string }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_treasure', params);
+  },
+
+  /**
+   * 触发自然灾害
+   */
+  triggerDisaster(params: { disaster_type: string; location: string; severity?: number }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_disaster', params);
+  },
+
+  /**
+   * 触发兽潮
+   */
+  triggerBeastTide(params: { location: string; intensity?: number }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_beast_tide', params);
+  },
+
+  /**
+   * 触发夺舍
+   */
+  triggerPossession(params: { possessor_id: string; target_id: string }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_possession', params);
+  },
+
+  /**
+   * 触发重生
+   */
+  triggerRebirth(params: { avatar_id: string; rebirth_type?: string }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_rebirth', params);
+  },
+
+  /**
+   * 执行占卜
+   */
+  performDivination(params: { avatar_id: string; question: string }) {
+    return httpClient.post<{ status: string; result: string }>('/api/god/perform_divination', params);
+  },
+
+  /**
+   * 设置世界秘密
+   */
+  setWorldSecret(params: { secret_name: string; secret_desc: string; reveal_condition?: string }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/set_world_secret', params);
+  },
+
+  /**
+   * 触发灭世危机
+   */
+  triggerApocalypse(params: { apocalypse_type: string; severity?: number }) {
+    return httpClient.post<{ status: string; message: string }>('/api/god/trigger_apocalypse', params);
   }
 };
