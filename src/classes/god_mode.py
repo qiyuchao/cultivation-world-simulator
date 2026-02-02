@@ -13,7 +13,7 @@ from src.classes.world import World
 from src.classes.avatar import Avatar
 from src.classes.event import Event
 from src.classes.calendar import MonthStamp
-from src.utils.llm.client import get_chat_completion
+from src.utils.llm.client import call_llm
 from src.utils.llm.config import LLMMode
 
 
@@ -120,10 +120,7 @@ class GodMode:
         mode = LLMMode.FAST if use_fast_model else LLMMode.NORMAL
         
         try:
-            response = await get_chat_completion(
-                messages=[{"role": "user", "content": full_prompt}],
-                mode=mode
-            )
+            response = await call_llm(full_prompt, mode=mode)
             
             self.record_action(
                 ability=GodAbility.AI_GENERATE,
